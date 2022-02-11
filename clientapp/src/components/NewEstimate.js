@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormHelperText, FormLabel, Heading, Input } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Spacer } from "@chakra-ui/react";
 import axios from "axios";
 import { useRef, useState } from "react";
 import { url } from "../App";
@@ -48,38 +48,42 @@ export default function NewEstimate() {
       <Box ml='12%' mt='20'>
         <Heading size='2xl' color='white'>New Estimate Request</Heading>
         {!vehicle ? (
-        <Box mt='20'>
-          <FormControl>
-            <Heading size='xl' color='white' htmlFor="vin">VIN:</Heading>
-            <Input
-              ref={vinInput}
-              mt='2'
-              w='20%'
-              size='lg'
-              isInvalid={error}
-              errorBorderColor="crimson"
-              color='white'
-              variant='flushed'
-              placeholder="Enter Vehicle's Vin"
-            />
-            <Button
-              ml='8'
-              color='black'
-              bgColor='#15FCEC'
-              isLoading={loading}
-              onClick={handleClick}>
-              Submit VIN
-            </Button>
-            {error && (
-              <FormHelperText color='crimson' size='lg'>
-                {error}
-              </FormHelperText>
-            )}
-          </FormControl>
-        </Box>
+          <Box mt='20'>
+            <FormControl>
+              <Heading size='xl' color='white' htmlFor="vin">VIN:</Heading>
+              <Input
+                ref={vinInput}
+                mt='2'
+                w='20%'
+                size='lg'
+                isInvalid={error}
+                errorBorderColor="crimson"
+                color='white'
+                variant='flushed'
+                placeholder="Enter Vehicle's Vin"
+              />
+              <Button
+                ml='8'
+                color='black'
+                bgColor='#15FCEC'
+                isLoading={loading}
+                onClick={handleClick}>
+                Submit VIN
+              </Button>
+              {error && (
+                <FormHelperText color='crimson' size='lg'>
+                  {error}
+                </FormHelperText>
+              )}
+            </FormControl>
+          </Box>
         ) : (
           <>
             <NewVehicle vehicle={vehicle} />
+            <Flex w='85%'>
+              <Spacer />
+              <Button bgColor='#15FCEC'>Submit Request</Button>
+            </Flex>
           </>
         )}
       </Box>

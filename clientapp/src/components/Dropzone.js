@@ -1,10 +1,12 @@
-import { Box, Center, Input } from '@chakra-ui/react'
-import React, { useCallback } from 'react'
+import { Box, Center, Input, List, ListItem, Heading } from '@chakra-ui/react'
+import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-export default function PhotoDropzone() {
+export default function PhotoDropzone({files, setFiles}) {
+  
   const onDrop = useCallback(acceptedFiles => {
-    console.log(acceptedFiles)
+    setFiles(files.push(acceptedFiles))
+    console.log('uploaded')
   }, [])
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
