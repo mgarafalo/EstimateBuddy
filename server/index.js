@@ -1,4 +1,6 @@
 const express = require('express');
+const { Client } = require('@shaggytools/nhtsa-api-wrapper');
+const vinValidator = require('vin-validator');
 
 // const { MongoClient } = require('mongodb')
 // const url = 'mongodb://localhost:27017';
@@ -17,15 +19,34 @@ app.get('/api/newShop', (req, res) => {
 
 app.get('/api/login', (req, res) => {
     if (req.query.username === 'test' && req.query.password === 'test') {
-        res.json({msg: 'Logged In', shopName: req.query.username})
+        res.json({ msg: 'Logged In', shopName: 'Miskin Body Shop' })
     } else {
-        res.send({error: 'Invalid Email or Password'})
+        res.send({ error: 'Invalid Email or Password' })
     }
 })
 
 app.get('/api/signup', (req, res) => {
     const shop = req.query.contactInfo
-    res.json({shopInfo: JSON.parse(shop)})
+    res.json({ shopInfo: JSON.parse(shop) })
+})
+
+app.get('/api/vin', async (req, res) => {
+    const vin = req.query.vin
+    const isValidVin = vinValidator.validate(vin)
+    if (isValidVin) {
+        const vehicle = await Client.DecodeVin(vin);
+        // res.json({vehicle: vehicle})
+        res.json({
+            vehicle: {
+                year: vehicle.Results[9].Value,
+                make: vehicle.Results[6].Value,
+                model: vehicle.Results[8].Value,
+                vin: vin
+            }
+        })
+    } else {
+        res.json({ error: 'VIN is invalid!' })
+    }
 })
 
 app.listen(PORT, () => {

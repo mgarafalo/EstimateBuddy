@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useContext, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form, Label, Input, Button } from 'semantic-ui-react';
 import { url } from '../App';
 import { ShopContext } from '../Context/ShopContext';
@@ -9,6 +10,7 @@ import { ShopContext } from '../Context/ShopContext';
 export default function Login() {
 
   const loginUrl = url + '/login'
+  const navigate = useNavigate()
 
   const shopUsername = useRef(null);
   const shopPassword = useRef(null);
@@ -29,6 +31,7 @@ export default function Login() {
           console.log('worked')
         } else {
           setShop(res.data.shopName)
+          navigate('/portal')
         }
       })
   }

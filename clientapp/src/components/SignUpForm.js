@@ -1,9 +1,14 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Form, Button, Checkbox, Input, Label } from 'semantic-ui-react';
 import axios from 'axios';
 import { url } from '../App';
+import { ShopContext } from '../Context/ShopContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignUpForm() {
+
+  const { shop, setShop } = useContext(ShopContext)
+  const navigate = useNavigate();
 
   const newShopUrl = url + '/signup';
   const shopNameInput = useRef(null)
@@ -21,18 +26,21 @@ export default function SignUpForm() {
       email: shopEmailInput.current.inputRef.current.value
     }
 
-    console.log(contactInfo)
-
     axios.get(newShopUrl, {
       params: {
         contactInfo
       }
     })
-      .then(res => console.log(res))
+      .then(res => {
+        console.log(res)
+        const shopName = res.data.shopInfo.shopName
+        setShop(shopName)
+        navigate('/')
+      })
   }
 
   return (
-    <Form style={{ margin: 'auto', width: '50%', marginTop: 120 }} onSubmit={(e) => handleSubmit(e)}>
+    <Form style={{ margin: 'auto', width: '30%', marginTop: 120 }} onSubmit={(e) => handleSubmit(e)}>
       <Form.Field>
         <Label style={{ color: 'white' }} content='Shop Name' />
         <Input ref={shopNameInput} focus name='shopName' placeholder='Shop Name' />

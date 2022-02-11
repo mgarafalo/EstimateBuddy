@@ -7,6 +7,8 @@ import SignUpForm from './components/SignUpForm';
 import Login from './components/Login';
 import { useMemo, useState } from 'react';
 import { ShopContext } from './Context/ShopContext';
+import Portal from './components/Portal';
+import NewEstimate from './components/NewEstimate';
 
 export const url = 'http://localhost:8000/api'
 
@@ -22,10 +24,12 @@ function App() {
       <ShopContext.Provider value={Shop}>
         <NavBar />
         <Routes>
-            <Route exact='true' path='/' element={<HomePage />} />
+            <Route exact='true' path='/' element={shop ? <Portal /> : <HomePage />} />
             <Route exact='true' path='/howto' element={<HowTo />} />
             <Route exact='true' path='/signup' element={<SignUpForm />} />
             <Route exact='true' path='/login' element={<Login />} />
+            <Route exact='true' path='/portal' element={<Portal />} />
+            <Route exact='true' path='/newEstimate' element={<NewEstimate />} />
         </Routes>
         </ShopContext.Provider>
       </BrowserRouter>
