@@ -7,7 +7,7 @@ import PortalActions from "./PortalActions";
 
 export default function Portal() {
 	const { shop } = useContext(ShopContext)
-	console.log(shop)
+	// console.log(shop)
 
 	return (
 		<>

@@ -11,9 +11,38 @@ const cors = require('cors');
 const app = express();
 const PORT = 8000
 
+const db = require('./models');
+const { shop } = require('./models');
+db.mongoose
+    .connect(db.url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => {
+        console.log('connected to db')
+    }).catch(err => {
+        console.log('error conntecting to db', err)
+        process.exit()
+    })
+
 app.use(cors())
 
 app.get('/api/newShop', (req, res) => {
+    const Shop = new shop({
+        shopName: req.query.shopName,
+        email: req.query.email,
+        phoneNumber: req.query.phoneNumber,
+        username: req.query.username,
+        password: req.query.password
+    });
+
+    Shop.save(Shop).then(data => {
+        console.log(data)
+        res.json({data: data})
+    }).catch(err => {
+        res.json({ msg: 'error', error: err})
+    })
+
     res.send(`Shop Name: ${req.query.shopName}, Email Address: ${req.query.email}`);
 })
 
@@ -51,7 +80,5 @@ app.get('/api/vin', async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Listneing on ${PORT}`)
-    // client.connect()
-    // console.log('Connected to DB')
 })
 

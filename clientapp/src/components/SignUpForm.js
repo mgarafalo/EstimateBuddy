@@ -10,7 +10,8 @@ export default function SignUpForm() {
   const { shop, setShop } = useContext(ShopContext)
   const navigate = useNavigate();
 
-  const newShopUrl = url + '/signup';
+  // const newShopUrl = url + '/signup';
+  const newShopUrl = url + '/newShop';
   const shopNameInput = useRef(null)
   const shopUsernameInput = useRef(null)
   const shopPasswordInput = useRef(null)
@@ -18,17 +19,21 @@ export default function SignUpForm() {
   const shopPhoneNumberInput = useRef(null)
 
   function handleSubmit(e) {
-    const contactInfo = {
-      shopName: shopNameInput.current.inputRef.current.value,
-      username: shopUsernameInput.current.inputRef.current.value,
-      password: shopPasswordInput.current.inputRef.current.value,
-      phoneNumber: shopPhoneNumberInput.current.inputRef.current.value,
-      email: shopEmailInput.current.inputRef.current.value
-    }
+    // const contactInfo = {
+    //   shopName: shopNameInput.current.inputRef.current.value,
+    //   username: shopUsernameInput.current.inputRef.current.value,
+    //   password: shopPasswordInput.current.inputRef.current.value,
+    //   phoneNumber: shopPhoneNumberInput.current.inputRef.current.value,
+    //   email: shopEmailInput.current.inputRef.current.value
+    // }
 
     axios.get(newShopUrl, {
       params: {
-        contactInfo
+        shopName: shopNameInput.current.inputRef.current.value,
+        username: shopUsernameInput.current.inputRef.current.value,
+        password: shopPasswordInput.current.inputRef.current.value,
+        phoneNumber: shopPhoneNumberInput.current.inputRef.current.value,
+        email: shopEmailInput.current.inputRef.current.value
       }
     })
       .then(res => {
