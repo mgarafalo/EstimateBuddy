@@ -81,10 +81,10 @@ export default function NewVehicle({ vehicle, submit }) {
             defaultValue='Select Insurance Company'
           >
             <option value='none'>Select Insurance Company...</option>
-            <option value='geico'>Geico</option>
-            <option value='progressive'>Progressive</option>
-            <option value='allState'>AllState</option>
-            <option value='nationwide'>Nationwide</option>
+            <option value='Geico'>Geico</option>
+            <option value='Progressive'>Progressive</option>
+            <option value='AllState'>AllState</option>
+            <option value='Nationwide'>Nationwide</option>
             <option value='other'>Other</option>
           </Select>
 
