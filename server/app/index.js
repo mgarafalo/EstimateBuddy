@@ -4,6 +4,7 @@ const app = express();
 const PORT = 8000
 
 const db = require('./models');
+const path = require('path')
 
 const { Client } = require('@shaggytools/nhtsa-api-wrapper');
 const vinValidator = require('vin-validator');
