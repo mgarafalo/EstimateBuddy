@@ -7,7 +7,7 @@ const db = {}
 
 db.mongoose = mongoose
 db.url = dbConfig.url
-db.estimate = require('./estimateRequest.models.js')(mongoose)
-db.shop = require('./shop.model')(mongoose)
+db.estimates = require('./estimateRequest.models.js')(mongoose)
+db.shops = require('./shop.model')(mongoose)
 
 module.exports = db

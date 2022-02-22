@@ -7,7 +7,7 @@ import PortalActions from "./PortalActions";
 
 export default function Portal() {
 	const { shop } = useContext(ShopContext)
-	// console.log(shop)
+	console.log(shop)
 
 	return (
 		<>
@@ -15,7 +15,7 @@ export default function Portal() {
 				<Box marginLeft='12%'>
 					<Heading size='xl' mb='4' mt='4' color='white'>
 						<Icon name="wrench" style={{ color: '#15FCEC' }} />
-						{shop}
+						{shop.shopName}
 					</Heading>					
 					<PortalActions />
 				</Box>

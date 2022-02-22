@@ -1,8 +1,8 @@
-import { Box, Divider, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, List, ListItem, Select, Textarea } from "@chakra-ui/react";
-import { useState, useEffect, useRef } from "react";
+import { Box, Button, Divider, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, List, ListItem, Select, Textarea, Spacer } from "@chakra-ui/react";
+import { useState, useRef } from "react";
 import PhotoDropzone from "./Dropzone";
 
-export default function NewVehicle({ vehicle }) {
+export default function NewVehicle({ vehicle, submit }) {
   const [files, setFiles] = useState([])
   const [otherInput, setOtherInput] = useState(false)
   const [insuranceCompanyError, setInsuranceCompanyError] = useState(false)
@@ -10,7 +10,8 @@ export default function NewVehicle({ vehicle }) {
   const estimate = {
     insuranceCompany: '',
     damageDescription: '',
-    vehicle: vehicle
+    vehicle: vehicle,
+    files: files
   }
   const [newEstimate, setNewEstimate] = useState(estimate)
 
@@ -19,15 +20,31 @@ export default function NewVehicle({ vehicle }) {
   const damageDescriptionTextarea = useRef(null)
 
   function updateDamageDescription() {
-    console.log(damageDescriptionTextarea.current.value)
-    setNewEstimate({...newEstimate, damageDescription: damageDescriptionTextarea.current.value})
+    // console.log(damageDescriptionTextarea.current.value)
+    setNewEstimate({ ...newEstimate, damageDescription: damageDescriptionTextarea.current.value })
+  }
+
+  function updateInsuranceCompany() {
+    setNewEstimate({ ...newEstimate, insuranceCompany: insuranceCompanyInput.current.value})
   }
 
   function handleChange() {
     setInsuranceCompanyError(false)
+    setOtherInput(false)
+
     const company = insuranceCompanySelect.current.value
-    if (company === 'none') setInsuranceCompanyError('Please select a valid insurance company')
-    company === 'other' ? setOtherInput(true) : setOtherInput(false)
+
+    if (company !== 'none' && company !== 'other') {
+      setNewEstimate({ ...newEstimate, insuranceCompany: company })
+    } else if (company === 'none') {
+      setInsuranceCompanyError('Please select a valid insurance company')
+    } else if (company === 'other') {
+      setOtherInput(true)
+    }
+  }
+
+  function handleClick() {
+    submit(newEstimate)
   }
 
   return (
@@ -90,6 +107,7 @@ export default function NewVehicle({ vehicle }) {
             type='text'
             id='insurance'
             required={otherInput ? true : false}
+            onChange={updateInsuranceCompany}
           />
         </Flex>
         {insuranceCompanyError && (
@@ -148,6 +166,11 @@ export default function NewVehicle({ vehicle }) {
           </List>
         </Box>
       </Box>
+
+      <Flex w='85%'>
+        <Spacer />
+        <Button bgColor='#15FCEC' onClick={handleClick}>Submit Request</Button>
+      </Flex>
     </>
   )
 }

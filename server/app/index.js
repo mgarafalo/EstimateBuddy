@@ -1,18 +1,15 @@
 const express = require('express');
-const { Client } = require('@shaggytools/nhtsa-api-wrapper');
-const vinValidator = require('vin-validator');
-
-// const { MongoClient } = require('mongodb')
-// const url = 'mongodb://localhost:27017';
-// const client = new MongoClient(url);
-// const dbName = 'EstimateBuddyTestV1';
-
 const cors = require('cors');
 const app = express();
 const PORT = 8000
 
 const db = require('./models');
-const { shop } = require('./models');
+
+const { Client } = require('@shaggytools/nhtsa-api-wrapper');
+const vinValidator = require('vin-validator');
+
+const cloudinary = require('cloudinary').v2
+
 db.mongoose
     .connect(db.url, {
         useNewUrlParser: true,
@@ -27,8 +24,18 @@ db.mongoose
 
 app.use(cors())
 
+app.get('/api/login', async (req, res) => {
+    const shop = await db.shops.find({ username: req.query.username })
+    if (shop.length > 0) {
+        res.json({ shop: shop[0] })
+    } else {
+        res.json({ error: 'Invalid Username or Password' })
+    }
+})
+
 app.get('/api/newShop', (req, res) => {
-    const Shop = new shop({
+    const Shop = db.shops
+    const shop = new Shop({
         shopName: req.query.shopName,
         email: req.query.email,
         phoneNumber: req.query.phoneNumber,
@@ -36,35 +43,55 @@ app.get('/api/newShop', (req, res) => {
         password: req.query.password
     });
 
-    Shop.save(Shop).then(data => {
-        console.log(data)
-        res.json({data: data})
-    }).catch(err => {
-        res.json({ msg: 'error', error: err})
+    shop.save(shop)
+        .then(data => {
+            // console.log(data)
+            res.json({ shopName: data.shopName })
+        })
+        .catch(err => {
+            res.json({ msg: 'error', error: err })
+        })
+})
+
+app.get('/api/newEstimateRequest', (req, res) => {
+    const EstimateRequest = db.estimates
+    const newEstimateRequet = new EstimateRequest({
+        username: req.query.username,
+        insuranceCompany: req.query.insuranceCompany,
+        vin: req.query.vin,
+        year: req.query.year,
+        make: req.query.make,
+        model: req.query.model,
+        description: req.query.description,
+        files: req.query.files,
+        awaiting: true,
+        closed: false
     })
 
-    res.send(`Shop Name: ${req.query.shopName}, Email Address: ${req.query.email}`);
+    newEstimateRequet.save(newEstimateRequet)
+        .then(data => {
+            res.json({ msg: 'New Estimate Created', estimate: newEstimateRequet })
+        }).catch(err => res.json({ msg: 'error', error: err }))
 })
 
-app.get('/api/login', (req, res) => {
-    if (req.query.username === 'test' && req.query.password === 'test') {
-        res.json({ msg: 'Logged In', shopName: 'Miskin Body Shop' })
-    } else {
-        res.send({ error: 'Invalid Email or Password' })
-    }
+app.get('/api/awaitingEstimates', async (req, res) => {
+    const username = req.query.username
+    const awaitingEstimates = await db.estimates.find({ username: username, awaiting: true })
+
+    res.json({ estimates: awaitingEstimates })
 })
 
-app.get('/api/signup', (req, res) => {
-    const shop = req.query.contactInfo
-    res.json({ shopInfo: JSON.parse(shop) })
-})
+
+// app.get('/api/signup', (req, res) => {
+//     const shop = req.query.contactInfo
+//     res.json({ shopInfo: JSON.parse(shop) })
+// })
 
 app.get('/api/vin', async (req, res) => {
     const vin = req.query.vin
     const isValidVin = vinValidator.validate(vin)
     if (isValidVin) {
         const vehicle = await Client.DecodeVin(vin);
-        // res.json({vehicle: vehicle})
         res.json({
             vehicle: {
                 year: vehicle.Results[9].Value,

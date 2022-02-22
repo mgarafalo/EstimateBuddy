@@ -19,13 +19,6 @@ export default function SignUpForm() {
   const shopPhoneNumberInput = useRef(null)
 
   function handleSubmit(e) {
-    // const contactInfo = {
-    //   shopName: shopNameInput.current.inputRef.current.value,
-    //   username: shopUsernameInput.current.inputRef.current.value,
-    //   password: shopPasswordInput.current.inputRef.current.value,
-    //   phoneNumber: shopPhoneNumberInput.current.inputRef.current.value,
-    //   email: shopEmailInput.current.inputRef.current.value
-    // }
 
     axios.get(newShopUrl, {
       params: {
@@ -37,9 +30,8 @@ export default function SignUpForm() {
       }
     })
       .then(res => {
-        console.log(res)
-        const shopName = res.data.shopInfo.shopName
-        setShop(shopName)
+        const shop = res.data.shop
+        setShop(shop)
         navigate('/')
       })
   }

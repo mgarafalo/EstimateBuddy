@@ -28,7 +28,7 @@ export default function NavBar() {
               <>
                 <MenuItem mr={2}>
                   <Heading as='h6' size='md' color='white' style={{ padding: 0 }}>
-                    {shop}
+                    {shop.shopName}
                   </Heading>
                 </MenuItem>
 

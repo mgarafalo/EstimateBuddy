@@ -3,12 +3,16 @@ module.exports = mongoose => {
     "estimateRequest",
     mongoose.Schema(
       {
-        shopName: String,
+        username: String,
+        insuranceCompany: String,
         vin: String,
         year: String,
         make: String,
         model: String,
         description: String,
+        files: Array,
+        awaiting: Boolean,
+        closed: Boolean
       },
       { timestamps: true }
     )

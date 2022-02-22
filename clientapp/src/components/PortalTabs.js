@@ -1,7 +1,12 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import { useContext } from "react";
+import { ShopContext } from "../Context/ShopContext";
 import AwaitingEstimates from "./AwaitingEstimates";
 
 export default function PortalTabs() {
+
+  const {shop} = useContext(ShopContext)
+
   return (
     <Tabs isFitted variant='enclosed' width='90%' mt='8'>
       <TabList>
