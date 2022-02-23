@@ -1,5 +1,5 @@
-const mongo = require("../config/mongo");
+// const mongo = require("../config/mongo");
 
 module.exports = {
-  url: process.env.MONGO_URL || mongo.url
+  url: process.env.MONGO_URL 
 };
