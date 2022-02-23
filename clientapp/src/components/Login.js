@@ -15,6 +15,8 @@ export default function Login() {
   const { setShop } = useContext(ShopContext)
 
   const loginUrl = url + '/login'
+  console.log(url)
+  console.log(loginUrl)
   const navigate = useNavigate()
 
   const shopUsername = useRef(null);
