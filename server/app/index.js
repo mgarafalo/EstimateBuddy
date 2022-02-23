@@ -92,12 +92,6 @@ app.get('/api/awaitingEstimates', async (req, res) => {
     res.json({ estimates: awaitingEstimates })
 })
 
-
-// app.get('/api/signup', (req, res) => {
-//     const shop = req.query.contactInfo
-//     res.json({ shopInfo: JSON.parse(shop) })
-// })
-
 app.get('/api/vin', async (req, res) => {
     const vin = req.query.vin
     const isValidVin = vinValidator.validate(vin)
