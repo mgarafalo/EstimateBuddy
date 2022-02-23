@@ -4,11 +4,13 @@ import axios from 'axios';
 import { url } from '../App';
 import { ShopContext } from '../Context/ShopContext';
 import { useNavigate } from 'react-router-dom';
+import { FormControl, FormHelperText } from '@chakra-ui/react';
 
 export default function SignUpForm() {
 
   const { shop, setShop } = useContext(ShopContext)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState()
   const navigate = useNavigate();
 
   // const newShopUrl = url + '/signup';
@@ -21,6 +23,7 @@ export default function SignUpForm() {
 
   function handleSubmit(e) {
     setLoading(true)
+    setError(null)
 
     axios.get(newShopUrl, {
       params: {
@@ -32,13 +35,17 @@ export default function SignUpForm() {
       }
     })
       .then(res => {
-        const shop = res.data.shop
-        setShop(shop)
-        setTimeout(() => {
-          setLoading(false)
-          window.scrollTo(0,0)
-          navigate('/portal')
-        }, 2500);
+        if (res.data.error) {
+          setError(res.data.error)
+        } else {
+          const shop = res.data.shop
+          setShop(shop)
+          setTimeout(() => {
+            setLoading(false)
+            window.scrollTo(0, 0)
+            navigate('/portal')
+          }, 2500);
+        }
       })
   }
 
@@ -67,6 +74,13 @@ export default function SignUpForm() {
       <Form.Field>
         <Checkbox label='I agree to the Terms and Conditions' />
       </Form.Field>
+      {error && (
+        <FormControl mb='2'>
+          <FormHelperText color='crimson' size='xl'>
+            {error}
+          </FormHelperText>
+        </FormControl>
+      )}
       <Button style={{ backgroundColor: '#15FCEC' }} loading={loading} type='submit' content='Submit' />
     </Form>
   )
