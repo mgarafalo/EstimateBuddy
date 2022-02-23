@@ -10,8 +10,9 @@ import { ShopContext } from '../Context/ShopContext';
 
 export default function Login() {
   const [error, setError] = useState()
+  const [loading, setLoading] = useState(false)
 
-  const { shop, setShop } = useContext(ShopContext)
+  const { setShop } = useContext(ShopContext)
 
   const loginUrl = url + '/login'
   const navigate = useNavigate()
@@ -21,6 +22,7 @@ export default function Login() {
 
   function handleClick() {
     setError(null)
+    setLoading(true)
 
     axios.get(loginUrl, {
       params: {
@@ -29,12 +31,16 @@ export default function Login() {
       }
     })
       .then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.data.error) {
           setError(res.data.error)
+          setLoading(false)
         } else {
-          setShop(res.data.shop)
-          navigate('/portal')
+          setTimeout(() => {
+            setShop(res.data.shop)
+            setLoading(false)
+            navigate('/portal')
+          }, 1500);
         }
       })
   }
@@ -49,14 +55,14 @@ export default function Login() {
         </FormControl>
       )}
       <Form.Field>
-        <Label style={{ color: 'white' }} content='Shop Name' />
-        <Input ref={shopUsername} focus name='shopName' placeholder='Username' />
+        <Label style={{ color: 'white' }} content='Username' />
+        <Input ref={shopUsername} focus name='username' placeholder='Username' />
       </Form.Field>
       <Form.Field>
         <Label style={{ color: 'white' }} content='Password' />
-        <Input ref={shopPassword} focus name='password' placeholder='Password' />
+        <Input ref={shopPassword} focus type='password' name='password' placeholder='Password' />
       </Form.Field>
-      <Button onClick={handleClick} style={{ backgroundColor: '#15FCEC', marginTop: 8 }} type='submit' content='Login' />
+      <Button onClick={handleClick} loading={loading} style={{ backgroundColor: '#15FCEC', marginTop: 8 }} type='submit' content='Login' />
     </Form>
   )
 }

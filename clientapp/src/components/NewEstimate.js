@@ -66,7 +66,7 @@ export default function NewEstimate() {
         files: estimateRequest.files
       }
     }).then(res => {
-      console.log(res.data)
+      // console.log(res.data)
       window.scrollTo(0,0)
       navigate('/portal')
     })
