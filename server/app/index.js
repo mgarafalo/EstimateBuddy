@@ -37,31 +37,38 @@ app.use(express.static(path.join(__dirname, 'build')))
 app.get('/api/login', async (req, res) => {
     const shop = await db.shops.find({ username: req.query.username })
     if (shop.length > 0) {
-        pwHasher.verify(req.query.password, shop[0].password) 
-            ? res.json({ shop: shop[0] }) 
+        pwHasher.verify(req.query.password, shop[0].password)
+            ? res.json({ shop: shop[0] })
             : res.json({ error: 'Invalid Username or Password' })
     } else {
         res.json({ error: 'Invalid Username or Password' })
     }
 })
 
-app.get('/api/newShop', (req, res) => {
-    const Shop = db.shops
-    const shop = new Shop({
-        shopName: req.query.shopName,
-        email: req.query.email,
-        phoneNumber: req.query.phoneNumber,
-        username: req.query.username,
-        password: pwHasher.generate(req.query.password)
-    });
+app.get('/api/newShop', async (req, res) => {
+    const duplicateUsername = await db.shops.find({ username: req.query.username })
+    const dupliacteEmail = await db.shops.find({ email: req.query.email })
+    if (duplicateUsername.length === 0 || dupliacteEmail.length === 0) {
+        const Shop = db.shops
+        const shop = new Shop({
+            shopName: req.query.shopName,
+            email: req.query.email,
+            phoneNumber: req.query.phoneNumber,
+            username: req.query.username,
+            password: pwHasher.generate(req.query.password)
+        });
 
-    shop.save(shop)
-        .then(data => {
-            res.json({ shop: shop })
-        })
-        .catch(err => {
-            res.json({ msg: 'error', error: err })
-        })
+        shop.save(shop)
+            .then(data => {
+                res.json({ shop: shop })
+            })
+            .catch(err => {
+                res.json({ msg: 'error', error: err })
+            })
+    } else {
+        res.json({ error: 'Username or Email already exists' })
+    }
+
 })
 
 app.get('/api/newEstimateRequest', (req, res) => {
