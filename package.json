@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node server/app/index.js"
   },
   "repository": {
     "type": "git",
@@ -22,9 +22,11 @@
     "@shaggytools/nhtsa-api-wrapper": "^2.0.3",
     "cloudinary": "^1.28.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "mongodb": "^4.3.1",
     "mongoose": "^6.2.1",
+    "password-hash": "^1.2.2",
     "vin-validator": "^1.0.0"
   }
 }

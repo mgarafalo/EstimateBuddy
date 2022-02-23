@@ -1,12 +1,17 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const PORT = 8000
+const dotenv = require('dotenv')
+dotenv.config()
+
+const PORT = process.env.PORT || 8000
 
 const db = require('./models');
+const path = require('path')
 
 const { Client } = require('@shaggytools/nhtsa-api-wrapper');
 const vinValidator = require('vin-validator');
+const pwHasher = require('password-hash')
 
 const cloudinary = require('cloudinary').v2
 
@@ -23,11 +28,18 @@ db.mongoose
     })
 
 app.use(cors())
+app.use(express.static(path.join(__dirname, 'build')))
+
+// app.get('/*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 
 app.get('/api/login', async (req, res) => {
     const shop = await db.shops.find({ username: req.query.username })
     if (shop.length > 0) {
-        res.json({ shop: shop[0] })
+        pwHasher.verify(req.query.password, shop[0].password) 
+            ? res.json({ shop: shop[0] }) 
+            : res.json({ error: 'Invalid Username or Password' })
     } else {
         res.json({ error: 'Invalid Username or Password' })
     }
@@ -40,13 +52,12 @@ app.get('/api/newShop', (req, res) => {
         email: req.query.email,
         phoneNumber: req.query.phoneNumber,
         username: req.query.username,
-        password: req.query.password
+        password: pwHasher.generate(req.query.password)
     });
 
     shop.save(shop)
         .then(data => {
-            // console.log(data)
-            res.json({ shopName: data.shopName })
+            res.json({ shop: shop })
         })
         .catch(err => {
             res.json({ msg: 'error', error: err })
@@ -80,12 +91,6 @@ app.get('/api/awaitingEstimates', async (req, res) => {
 
     res.json({ estimates: awaitingEstimates })
 })
-
-
-// app.get('/api/signup', (req, res) => {
-//     const shop = req.query.contactInfo
-//     res.json({ shopInfo: JSON.parse(shop) })
-// })
 
 app.get('/api/vin', async (req, res) => {
     const vin = req.query.vin

@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { Form, Button, Checkbox, Input, Label } from 'semantic-ui-react';
 import axios from 'axios';
 import { url } from '../App';
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 export default function SignUpForm() {
 
   const { shop, setShop } = useContext(ShopContext)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
 
   // const newShopUrl = url + '/signup';
@@ -19,6 +20,7 @@ export default function SignUpForm() {
   const shopPhoneNumberInput = useRef(null)
 
   function handleSubmit(e) {
+    setLoading(true)
 
     axios.get(newShopUrl, {
       params: {
@@ -32,7 +34,11 @@ export default function SignUpForm() {
       .then(res => {
         const shop = res.data.shop
         setShop(shop)
-        navigate('/')
+        setTimeout(() => {
+          setLoading(false)
+          window.scrollTo(0,0)
+          navigate('/portal')
+        }, 2500);
       })
   }
 
@@ -48,7 +54,7 @@ export default function SignUpForm() {
       </Form.Field>
       <Form.Field>
         <Label style={{ color: 'white' }} content='Password' />
-        <Input ref={shopPasswordInput} focus name='password' placeholder='Password' />
+        <Input ref={shopPasswordInput} type='password' focus name='password' placeholder='Password' />
       </Form.Field>
       <Form.Field>
         <Label style={{ color: 'white' }} content='Email Address' />
@@ -61,7 +67,7 @@ export default function SignUpForm() {
       <Form.Field>
         <Checkbox label='I agree to the Terms and Conditions' />
       </Form.Field>
-      <Button style={{ backgroundColor: '#15FCEC' }} type='submit' content='Submit' />
+      <Button style={{ backgroundColor: '#15FCEC' }} loading={loading} type='submit' content='Submit' />
     </Form>
   )
 }
