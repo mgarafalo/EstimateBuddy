@@ -10,7 +10,9 @@ import { ShopContext } from './Context/ShopContext';
 import Portal from './components/Portal';
 import NewEstimate from './components/NewEstimate';
 
-export const url = process.env.REACT_APP_API
+export const url = process.env.NODE_ENV === 'development' 
+  ? process.env.REACT_APP_LOCAL_API_URL 
+  : process.env.REACT_APP_SERVER_API_URL
 console.log(process.env)
 
 
