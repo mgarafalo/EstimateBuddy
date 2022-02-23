@@ -12,7 +12,7 @@ import NewEstimate from './components/NewEstimate';
 
 export const url = process.env.REACT_APP_API
 console.log(process.env)
-console.log('new')
+
 
 function App() {
   document.title = 'EstimateBuddy'
