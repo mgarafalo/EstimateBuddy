@@ -10,8 +10,6 @@ import { ShopContext } from './Context/ShopContext';
 import Portal from './components/Portal';
 import NewEstimate from './components/NewEstimate';
 
-// export const url = 'http://localhost:8000/api' // Dev
-// export const url = 'https://estimate-buddy.herokuapp.com/api' // Prod
 export const url = process.env.REACT_APP_API
 console.log(process.env)
 
