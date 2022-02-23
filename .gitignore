@@ -1,3 +1,2 @@
-
+.env
 server/config/mongo.js
-server/.env
