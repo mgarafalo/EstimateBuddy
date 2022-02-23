@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import { ShopContext } from './Context/ShopContext';
 import Portal from './components/Portal';
 import NewEstimate from './components/NewEstimate';
+import env from 'react-dotenv'
 
 export const url = process.env.NODE_ENV === 'development' 
   ? process.env.REACT_APP_LOCAL_API_URL 
