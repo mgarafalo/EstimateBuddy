@@ -9,16 +9,17 @@ import { ShopContext } from '../Context/ShopContext';
 
 
 export default function Login() {
+  const { setShop } = useContext(ShopContext)
+
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
 
-  const { setShop } = useContext(ShopContext)
-
-  const loginUrl = url + '/login'
   const navigate = useNavigate()
 
   const shopUsername = useRef(null);
   const shopPassword = useRef(null);
+
+  const loginUrl = url + '/login'
 
   function handleClick() {
     setError(null)
