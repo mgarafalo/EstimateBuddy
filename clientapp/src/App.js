@@ -9,12 +9,11 @@ import { useMemo, useState } from 'react';
 import { ShopContext } from './Context/ShopContext';
 import Portal from './components/Portal';
 import NewEstimate from './components/NewEstimate';
-import env from 'react-dotenv'
 
 export const url = process.env.NODE_ENV === 'development' 
-  ? process.env.REACT_APP_LOCAL_API_URL 
-  : process.env.REACT_APP_SERVER_API_URL
-console.log(process.env)
+  ? 'http://localhost:8000/api'
+  : 'https://estimate-buddy.herokuapp.com/api'
+// console.log(process.env)
 
 
 function App() {
