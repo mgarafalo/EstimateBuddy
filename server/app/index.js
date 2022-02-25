@@ -15,6 +15,12 @@ const pwHasher = require('password-hash')
 
 const cloudinary = require('cloudinary').v2
 
+cloudinary.config({ 
+    cloud_name: 'dmizsfnhe', 
+    api_key: '964149184881432', 
+    api_secret: '04gwMlpSnFMIuKw-8dHy59AtTO0' 
+  });
+
 db.mongoose
     .connect(db.url, {
         useNewUrlParser: true,
@@ -71,7 +77,14 @@ app.get('/api/newShop', async (req, res) => {
 
 })
 
+app.post('/api/imageUpload', (req, res) => {
+    console.log(req)
+    cloudinary.uploader.upload(req.body)
+    .then(result => res.json({res: result}))
+})
+
 app.get('/api/newEstimateRequest', (req, res) => {
+    console.log(req.query.files)
     const EstimateRequest = db.estimates
     const newEstimateRequet = new EstimateRequest({
         username: req.query.username,
@@ -87,9 +100,10 @@ app.get('/api/newEstimateRequest', (req, res) => {
     })
 
     newEstimateRequet.save(newEstimateRequet)
-        .then(data => {
-            res.json({ msg: 'New Estimate Created', estimate: newEstimateRequet })
-        }).catch(err => res.json({ msg: 'error', error: err }))
+        // .then(() => {
+        //     res.json({ msg: 'New Estimate Created', estimate: newEstimateRequet })
+        // })
+        .catch(err => res.json({error: 'There was an error submitting your request, please try again or contact support'}))
 })
 
 app.get('/api/awaitingEstimates', async (req, res) => {

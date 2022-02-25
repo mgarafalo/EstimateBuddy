@@ -1,23 +1,36 @@
-import { Box, Button, Divider, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, List, ListItem, Select, Textarea, Spacer } from "@chakra-ui/react";
-import { useState, useRef } from "react";
+import { Box, Button, Divider, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, List, ListItem, Select, Textarea, Text, Spacer } from "@chakra-ui/react";
+import { useState, useRef, useContext } from "react";
 import PhotoDropzone from "./Dropzone";
+import { useNavigate } from "react-router-dom";
+import { url } from "../App";
+import axios from "axios";
+import { ShopContext } from "../Context/ShopContext";
 
-export default function NewVehicle({ vehicle, submit }) {
+export default function NewVehicle({ vehicle, error, setRequestError }) {
+  const { shop } = useContext(ShopContext)
+
   const [files, setFiles] = useState([])
+  const [loading, setLoading] = useState(false)
   const [otherInput, setOtherInput] = useState(false)
   const [insuranceCompanyError, setInsuranceCompanyError] = useState(false)
+
+  const insuranceCompanySelect = useRef(null)
+  const insuranceCompanyInput = useRef(null)
+  const damageDescriptionTextarea = useRef(null)
+
+  const navigate = useNavigate()
 
   const estimate = {
     insuranceCompany: '',
     damageDescription: '',
     vehicle: vehicle,
-    files: files
   }
   const [newEstimate, setNewEstimate] = useState(estimate)
 
-  const insuranceCompanySelect = useRef(null)
-  const insuranceCompanyInput = useRef(null)
-  const damageDescriptionTextarea = useRef(null)
+  function updateFiles(file) {
+    console.log(file)
+    setFiles(files.push(file))
+  }
 
   function updateDamageDescription() {
     // console.log(damageDescriptionTextarea.current.value)
@@ -25,7 +38,7 @@ export default function NewVehicle({ vehicle, submit }) {
   }
 
   function updateInsuranceCompany() {
-    setNewEstimate({ ...newEstimate, insuranceCompany: insuranceCompanyInput.current.value})
+    setNewEstimate({ ...newEstimate, insuranceCompany: insuranceCompanyInput.current.value })
   }
 
   function handleChange() {
@@ -43,9 +56,42 @@ export default function NewVehicle({ vehicle, submit }) {
     }
   }
 
-  function handleClick() {
-    submit(newEstimate)
+  function handleSubmit() {
+    console.log(files)
+    setLoading(true)
+    const newEstimateUrl = url + '/newEstimateRequest'
+
+    axios.get(newEstimateUrl, {
+      params: {
+        insuranceCompany: newEstimate.insuranceCompany,
+        username: shop.username,
+        description: newEstimate.damageDescription,
+        vin: newEstimate.vehicle.vin,
+        year: newEstimate.vehicle.year,
+        model: newEstimate.vehicle.model,
+        make: newEstimate.vehicle.make,
+        files: files
+      }
+    }).then(res => {
+      console.log(res)
+      if (res.data.error) {
+        setLoading(false)
+        setRequestError(res.data.error)
+      } else {
+        setTimeout(() => {
+          setLoading(false)
+          window.scrollTo(0, 0)
+          navigate('/portal')
+        }, 2000)
+      }
+    })
+      .catch(err => console.log(err))
   }
+
+
+  // function handleClick() {
+  //   handleSubmit(newEstimate)
+  // }
 
   return (
     <>
@@ -141,35 +187,35 @@ export default function NewVehicle({ vehicle, submit }) {
           Please upload all photos taken of the vehicle
           including clear photos of the VIN and all damage related to the loss
         </Heading>
-        <Box
-          mt='5'
-          w='50%'
-          bgColor='#989C94'
-          borderRadius={10}
-          style={{ boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px' }}
-        >
-          <PhotoDropzone files={files} setFIles={setFiles} />
+        <Box width='100%'>
+          <PhotoDropzone files={files} updateFiles={updateFiles} />
         </Box>
-
-        <Box>
+        <Box mt='8'>
           <Heading size='md' color='white'>Files:</Heading>
           <List spacing={3}>
-            {files.length && files.map((file, i) => {
+            {console.log(files)}
+            {/* {files && files.map((file, idx) => {
+              console.log(file.name)
               return (
                 <>
-                  <ListItem key={i} color='white'>
-                    {file[0].name}
+                  <ListItem key={idx} color='white'>
+                    {file.name}
                   </ListItem>
                 </>
               )
-            })}
+            })} */}
           </List>
         </Box>
       </Box>
 
       <Flex w='85%'>
         <Spacer />
-        <Button bgColor='#15FCEC' onClick={handleClick}>Submit Request</Button>
+        {error && (
+          <Text mr='6' mt='2' color='crimson' size='lg'>
+            {error}
+          </Text>
+        )}
+        <Button loading={loading} bgColor='#15FCEC' onClick={handleSubmit}>Submit Request</Button>
       </Flex>
     </>
   )
