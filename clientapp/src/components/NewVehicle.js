@@ -188,7 +188,7 @@ export default function NewVehicle({ vehicle, error, setRequestError }) {
           including clear photos of the VIN and all damage related to the loss
         </Heading>
         <Box width='100%'>
-          <PhotoDropzone files={files} updateFiles={updateFiles} />
+          <PhotoDropzone files={files} updateFiles={updateFiles} shopName={shop.shopName} vin={newEstimate.vehicle.vin} />
         </Box>
         <Box mt='8'>
           <Heading size='md' color='white'>Files:</Heading>

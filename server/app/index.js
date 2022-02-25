@@ -13,13 +13,14 @@ const { Client } = require('@shaggytools/nhtsa-api-wrapper');
 const vinValidator = require('vin-validator');
 const pwHasher = require('password-hash')
 
-const cloudinary = require('cloudinary').v2
+const formidable = require('formidable')
+const cloudinary = require('cloudinary')
 
-cloudinary.config({ 
-    cloud_name: 'dmizsfnhe', 
-    api_key: '964149184881432', 
-    api_secret: '04gwMlpSnFMIuKw-8dHy59AtTO0' 
-  });
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
 
 db.mongoose
     .connect(db.url, {
@@ -36,10 +37,6 @@ db.mongoose
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'build')))
 
-// app.get('/*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
-
 app.get('/api/login', async (req, res) => {
     const shop = await db.shops.find({ username: req.query.username })
     if (shop.length > 0) {
@@ -54,6 +51,7 @@ app.get('/api/login', async (req, res) => {
 app.get('/api/newShop', async (req, res) => {
     const duplicateUsername = await db.shops.find({ username: req.query.username })
     const dupliacteEmail = await db.shops.find({ email: req.query.email })
+
     if (duplicateUsername.length === 0 || dupliacteEmail.length === 0) {
         const Shop = db.shops
         const shop = new Shop({
@@ -66,6 +64,7 @@ app.get('/api/newShop', async (req, res) => {
 
         shop.save(shop)
             .then(data => {
+                cloudinary.v2.api.create_folder(`EstimateBuddy/${shop.shopName}`)
                 res.json({ shop: shop })
             })
             .catch(err => {
@@ -78,9 +77,35 @@ app.get('/api/newShop', async (req, res) => {
 })
 
 app.post('/api/imageUpload', (req, res) => {
-    console.log(req)
-    cloudinary.uploader.upload(req.body)
-    .then(result => res.json({res: result}))
+    const form = new formidable.IncomingForm()
+    try {
+        form.parse(req, (err, fields, files) => {
+            try {
+                cloudinary.v2.uploader.upload(files.file.filepath,
+                    {
+                        use_filename: true,
+                        filename_override: `${fields.shopName}_${fields.vin}`,
+                        folder: `EstimateBuddy/${fields.shopName}`
+                    },
+                    (cloudError, result) => {
+                        // console.log(result)
+                        res.json({
+                            result: result,
+                            filename: result.original_filename,
+                            url: result.secure_url
+                        })
+                    }).catch(err => res.json({ error: `form error: ${err}` }))
+            } catch (error) {
+                console.log(error)
+            }
+        })
+    } catch (error) {
+        console.log('catch', error)
+        res.json({ error: error })
+    }
+
+
+    // .then(result => res.json({res: result}))
 })
 
 app.get('/api/newEstimateRequest', (req, res) => {
@@ -103,7 +128,7 @@ app.get('/api/newEstimateRequest', (req, res) => {
         // .then(() => {
         //     res.json({ msg: 'New Estimate Created', estimate: newEstimateRequet })
         // })
-        .catch(err => res.json({error: 'There was an error submitting your request, please try again or contact support'}))
+        .catch(err => res.json({ error: 'There was an error submitting your request, please try again or contact support' }))
 })
 
 app.get('/api/awaitingEstimates', async (req, res) => {

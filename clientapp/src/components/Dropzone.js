@@ -4,50 +4,24 @@ import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { url } from '../App'
 
-export default function PhotoDropzone({ files, updateFiles }) {
+export default function PhotoDropzone({ files, updateFiles, shopName, vin }) {
 
   const FormData = require('form-data');
 
   const imageUrl = url + '/imageUpload'
 
-  // const onDrop = useCallback(file => {
-  //   // updateFiles(acceptedFiles)
-
-  //   console.log(newFile)
-  //   // axios.post(imageUrl, {
-  //   //   params: {
-  //   //     image: acceptedFiles
-  //   //   }
-  //   // })
-  //   //   .then(res => console.log(res))
-  //   //   .catch(err => console.log(err))
-  // }, [])
   const onDrop = (file) => {
-    console.log(file)
+    // console.log(file)
     let formData = new FormData()
-    formData.append('api_key', '964149184881432')
-    formData.append('file', file)
-    formData.append('upload_preset', 'kjdqgdwt')
-    // formData.cloud_name = 'dmizsfnhe'
-    // formData.api_key = '964149184881432'
-    // formData.api_secret = '04gwMlpSnFMIuKw-8dHy59AtTO0'
-    // formData.file = file[0]
-    // formData.upload_preset = 'kjdqgdwt'
+    console.log(file[0])
+    formData.append('file', file[0])
+    formData.append('shopName', shopName)
+    formData.append('vin', vin)
 
     try {
-      axios.post(imageUrl, formData)
-        // axios.post('https://api.cloudinary.com/v1_1/dmizsfnhe/upload', formData, {
-        //   headers: {
-        //     'accept': 'application/json',
-        //     'Accept-Language': 'en-US,en;q=0.8',
-        //     'Content-Type': formData.type
-        //   }
-        // })
-        // headers: {
-        //   'accept': 'application/json',
-        //   'Accept-Language': 'en-US,en;q=0.8',
-        //   'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-        // }
+      axios.post(imageUrl, formData, {
+        headers: {'content-type': 'multipart/form-data'}
+      })
         .then(res => console.log(res))
         .catch(err => console.log(err))
     } catch (err) {
