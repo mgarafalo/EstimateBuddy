@@ -7,7 +7,6 @@ import { NavLink } from 'react-router-dom';
 export default function HomePage() {
 
   const Shop = useContext(ShopContext)
-  console.log(Shop)
 
   return (
     <>

@@ -1,21 +1,16 @@
 import { Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Spacer } from "@chakra-ui/react";
 import axios from "axios";
 import { useRef, useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { url } from "../App";
 import NewVehicle from "./NewVehicle";
 import { ShopContext } from "../Context/ShopContext";
 
 export default function NewEstimate() {
-  const { shop } = useContext(ShopContext)
-
   const [vehicle, setVehicle] = useState()
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
 
   const vinInput = useRef(null)
-
-  const navigate = useNavigate()
 
   useEffect(() => window.scrollTo(0,0), [])
 
@@ -28,7 +23,7 @@ export default function NewEstimate() {
       }
     })
       .then(res => {
-        console.log(res)
+        // console.log(res)
         setTimeout(() => {
           setLoading(false)
           if (!res.data.error) {
@@ -51,25 +46,6 @@ export default function NewEstimate() {
     }
   }
 
-  function handleSubmit(estimateRequest) {
-    const newEstimateUrl = url + '/newEstimateRequest'
-
-    axios.get(newEstimateUrl, {
-      params: {
-        insuranceCompany: estimateRequest.insuranceCompany,
-        username: shop.username,
-        description: estimateRequest.damageDescription,
-        vin: estimateRequest.vehicle.vin,
-        year: estimateRequest.vehicle.year,
-        model: estimateRequest.vehicle.model,
-        make: estimateRequest.vehicle.make,
-        files: estimateRequest.files
-      }
-    }).then(res => {
-      window.scrollTo(0,0)
-      navigate('/portal')
-    })
-  }
 
   return (
     <>
@@ -107,7 +83,9 @@ export default function NewEstimate() {
           </Box>
         ) : (
           <>
-            <NewVehicle vehicle={vehicle} submit={handleSubmit} />
+            <NewVehicle 
+              vehicle={vehicle} 
+            />
           </>
         )}
       </Box>

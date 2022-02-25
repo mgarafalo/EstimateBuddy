@@ -41,7 +41,7 @@ export default function Login() {
             setShop(res.data.shop)
             setLoading(false)
             navigate('/portal')
-          }, 1500);
+          }, 1000);
         }
       })
   }
