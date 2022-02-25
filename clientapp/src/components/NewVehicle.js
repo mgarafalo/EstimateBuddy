@@ -6,12 +6,13 @@ import { url } from "../App";
 import axios from "axios";
 import { ShopContext } from "../Context/ShopContext";
 
-export default function NewVehicle({ vehicle, error, setRequestError }) {
+export default function NewVehicle({ vehicle }) {
   const { shop } = useContext(ShopContext)
 
   const [files, setFiles] = useState([])
   const [loading, setLoading] = useState(false)
   const [otherInput, setOtherInput] = useState(false)
+  const [error, setError] = useState(null)
   const [insuranceCompanyError, setInsuranceCompanyError] = useState(false)
 
   const insuranceCompanySelect = useRef(null)
@@ -28,12 +29,11 @@ export default function NewVehicle({ vehicle, error, setRequestError }) {
   const [newEstimate, setNewEstimate] = useState(estimate)
 
   function updateFiles(file) {
-    console.log(file)
-    setFiles(files.push(file))
+    const newFiles = files.concat(file)
+    setFiles(newFiles)
   }
 
   function updateDamageDescription() {
-    // console.log(damageDescriptionTextarea.current.value)
     setNewEstimate({ ...newEstimate, damageDescription: damageDescriptionTextarea.current.value })
   }
 
@@ -57,41 +57,39 @@ export default function NewVehicle({ vehicle, error, setRequestError }) {
   }
 
   function handleSubmit() {
-    console.log(files)
-    setLoading(true)
-    const newEstimateUrl = url + '/newEstimateRequest'
+    try {
+      setError(null)
+      setLoading(true)
+      const newEstimateUrl = url + '/newEstimateRequest'
 
-    axios.get(newEstimateUrl, {
-      params: {
-        insuranceCompany: newEstimate.insuranceCompany,
-        username: shop.username,
-        description: newEstimate.damageDescription,
-        vin: newEstimate.vehicle.vin,
-        year: newEstimate.vehicle.year,
-        model: newEstimate.vehicle.model,
-        make: newEstimate.vehicle.make,
-        files: files
-      }
-    }).then(res => {
-      console.log(res)
-      if (res.data.error) {
-        setLoading(false)
-        setRequestError(res.data.error)
-      } else {
-        setTimeout(() => {
+      axios.get(newEstimateUrl, {
+        params: {
+          insuranceCompany: newEstimate.insuranceCompany,
+          username: shop.username,
+          description: newEstimate.damageDescription,
+          vin: newEstimate.vehicle.vin,
+          year: newEstimate.vehicle.year,
+          model: newEstimate.vehicle.model,
+          make: newEstimate.vehicle.make,
+          files: files
+        }
+      }).then(res => {
+        if (res.data.error) {
           setLoading(false)
-          window.scrollTo(0, 0)
-          navigate('/portal')
-        }, 2000)
-      }
-    })
-      .catch(err => console.log(err))
+          setError(res.data.error)
+        } else {
+          setTimeout(() => {
+            setLoading(false)
+            window.scrollTo(0, 0)
+            navigate('/portal')
+          }, 1000)
+        }
+      })
+        .catch(err => console.log(err))
+    } catch (err) {
+      console.log(err)
+    }
   }
-
-
-  // function handleClick() {
-  //   handleSubmit(newEstimate)
-  // }
 
   return (
     <>
@@ -188,23 +186,12 @@ export default function NewVehicle({ vehicle, error, setRequestError }) {
           including clear photos of the VIN and all damage related to the loss
         </Heading>
         <Box width='100%'>
-          <PhotoDropzone files={files} updateFiles={updateFiles} shopName={shop.shopName} vin={newEstimate.vehicle.vin} />
-        </Box>
-        <Box mt='8'>
-          <Heading size='md' color='white'>Files:</Heading>
-          <List spacing={3}>
-            {console.log(files)}
-            {/* {files && files.map((file, idx) => {
-              console.log(file.name)
-              return (
-                <>
-                  <ListItem key={idx} color='white'>
-                    {file.name}
-                  </ListItem>
-                </>
-              )
-            })} */}
-          </List>
+          <PhotoDropzone
+            files={files}
+            updateFiles={updateFiles}
+            shopName={shop.shopName}
+            vin={newEstimate.vehicle.vin}
+          />
         </Box>
       </Box>
 
@@ -215,7 +202,7 @@ export default function NewVehicle({ vehicle, error, setRequestError }) {
             {error}
           </Text>
         )}
-        <Button loading={loading} bgColor='#15FCEC' onClick={handleSubmit}>Submit Request</Button>
+        <Button isLoading={loading} bgColor='#15FCEC' onClick={handleSubmit}>Submit Request</Button>
       </Flex>
     </>
   )

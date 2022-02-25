@@ -6,13 +6,9 @@ import NewVehicle from "./NewVehicle";
 import { ShopContext } from "../Context/ShopContext";
 
 export default function NewEstimate() {
-  const { shop } = useContext(ShopContext)
-
   const [vehicle, setVehicle] = useState()
   const [error, setError] = useState()
-  const [requestError, setRequestError] = useState()
   const [loading, setLoading] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
 
   const vinInput = useRef(null)
 
@@ -89,7 +85,6 @@ export default function NewEstimate() {
           <>
             <NewVehicle 
               vehicle={vehicle} 
-              error={requestError}
             />
           </>
         )}
