@@ -38,14 +38,24 @@ app.use(cors())
 app.use(express.static(path.join(__dirname, 'build')))
 
 app.get('/api/login', async (req, res) => {
-  const shop = await db.shops.find({ username: req.query.username })
-  if (shop.length > 0) {
-    pwHasher.verify(req.query.password, shop[0].password)
-      ? res.json({ shop: shop[0] })
-      : res.json({ error: 'Invalid Username or Password' })
+  if (req.query.username !== 'admin') {
+    const shop = await db.shops.find({ username: req.query.username })
+    if (shop.length > 0) {
+      pwHasher.verify(req.query.password, shop[0].password)
+        ? res.json({ shop: shop[0] })
+        : res.json({ error: 'Invalid Username or Password' })
+    } else {
+      res.json({ error: 'Invalid Username or Password' })
+    }
   } else {
-    res.json({ error: 'Invalid Username or Password' })
+    const admin = await db.shops.find({ username: req.query.username })
+    admin.length > 0 ?
+      pwHasher.verify(req.query.password, admin[0].password)
+        ? res.json({ admin: admin[0] })
+        : res.json({ error: 'Invalid Username or Password' })
+      : res.json({ error: 'Invalid Username or Password' })
   }
+
 })
 
 app.get('/api/newShop', async (req, res) => {
@@ -122,16 +132,31 @@ app.get('/api/newEstimateRequest', (req, res) => {
 
   newEstimateRequet.save(newEstimateRequet)
     .then(() => {
-        res.json({ msg: 'New Estimate Created' })
+      res.json({ msg: 'New Estimate Created' })
     })
     .catch(err => res.json({ error: 'There was an error submitting your request, please try again or contact support' }))
 })
 
 app.get('/api/awaitingEstimates', async (req, res) => {
   const username = req.query.username
-  const awaitingEstimates = await db.estimates.find({ username: username, awaiting: true })
+  const awaitingEstimates = username !== 'admin'
+    ? await db.estimates.find({ username: username, awaiting: true })
+    : await db.estimates.find({ awaiting: true })
 
   res.json({ estimates: awaitingEstimates })
+})
+
+app.get('/api/markOpen', async (req, res) => {
+  req.query.user.username !== 'admin'
+    ? res.json({ error: 'Invalid Operation' })
+    : await db.estimates.updateOne(
+      { _id: req.query.id },
+      {
+        $set: { awaiting: false }
+      }
+    )
+      .then(res.json({ id: req.query.id }))
+      .catch(err => res.json({ error: err }))
 })
 
 app.get('/api/vin', async (req, res) => {
@@ -154,8 +179,16 @@ app.get('/api/vin', async (req, res) => {
 
 // Delete test estimates
 app.get('/api/delete', async (req, res) => {
-  await db.estimates.deleteMany({username: 'test'})
+  await db.estimates.deleteMany({ username: 'test' })
   res.send('done')
+})
+
+// Sets all estimates awaiting prop to true 
+app.get('/api/resetAll', async (req, res) => {
+  await db.estimates.updateMany(
+    { awaiting: false },
+    { $set: { awaiting: true } }
+  ).then(res.send('done'))
 })
 
 app.listen(PORT, () => {

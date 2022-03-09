@@ -3,13 +3,15 @@ import { Container, Menu, MenuItem, MenuMenu } from 'semantic-ui-react'
 import { NavLink } from 'react-router-dom';
 import { Button, Heading } from '@chakra-ui/react';
 import { ShopContext } from '../Context/ShopContext';
+import { AdminContext } from '../Context/AdminContext';
 
 export default function NavBar() {
 
   const { shop, setShop } = useContext(ShopContext)
+  const { admin, setAdmin } = useContext(AdminContext)
 
   function handleClick() {
-    setShop(null)
+    shop ? setShop(null) : setAdmin(null)
   }
 
   return (
@@ -24,11 +26,11 @@ export default function NavBar() {
           </MenuItem>
 
           <MenuMenu position='right'>
-            {shop ? (
+            {shop || admin ? (
               <>
                 <MenuItem mr={2}>
                   <Heading as='h6' size='md' color='white' style={{ padding: 0 }}>
-                    {shop.shopName}
+                    {shop ? shop.shopName : 'Admin'}
                   </Heading>
                 </MenuItem>
 

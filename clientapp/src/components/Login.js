@@ -5,11 +5,13 @@ import { Form, Label, Input, Button } from 'semantic-ui-react';
 import { FormControl, FormHelperText } from '@chakra-ui/react';
 import { url } from '../App';
 import { ShopContext } from '../Context/ShopContext';
+import { AdminContext } from '../Context/AdminContext';
 
 
 
 export default function Login() {
   const { setShop } = useContext(ShopContext)
+  const { setAdmin } = useContext(AdminContext)
 
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
@@ -32,13 +34,13 @@ export default function Login() {
       }
     })
       .then(res => {
-        // console.log(res)
         if (res.data.error) {
           setError(res.data.error)
           setLoading(false)
         } else {
           setTimeout(() => {
-            setShop(res.data.shop)
+            console.log(res.data)
+            res.data.admin ? setAdmin(res.data.admin) : setShop(res.data.shop)
             setLoading(false)
             navigate('/portal')
           }, 1000);
