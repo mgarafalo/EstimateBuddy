@@ -27,6 +27,7 @@
     "formidable": "^2.0.1",
     "mongodb": "^4.3.1",
     "mongoose": "^6.2.1",
+    "passport-jwt": "^4.0.0",
     "password-hash": "^1.2.2",
     "vin-validator": "^1.0.0"
   }

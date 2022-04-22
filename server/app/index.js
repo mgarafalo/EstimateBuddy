@@ -146,8 +146,20 @@ app.get('/api/awaitingEstimates', async (req, res) => {
   res.json({ estimates: awaitingEstimates })
 })
 
+app.get('/api/openEstimates', async (req, res) => {
+  const user = req.query.username
+  const openEstimates = user !== 'admin' 
+    ? await db.estimates.find({ username: user, awaiting: false })
+    : await db.estimates.find({ awaiting: false })
+
+  res.json({ estimates: openEstimates })
+})
+
 app.get('/api/markOpen', async (req, res) => {
-  req.query.user.username !== 'admin'
+  const user = req.query.user
+  const admin = await db.shops.find({ _id: user._id })
+  console.log(req.query.user)
+  user._id !== admin._id
     ? res.json({ error: 'Invalid Operation' })
     : await db.estimates.updateOne(
       { _id: req.query.id },

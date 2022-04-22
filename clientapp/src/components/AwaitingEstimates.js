@@ -33,16 +33,25 @@ export default function AwaitingEstimates() {
       })
   }
 
+  function handleError(error) {
+    setTimeout(() => {
+      setError(error)
+      setButtonLoading(false)
+    }, 1000);
+  }
+
   function markOpen(id) {
     setButtonLoading(true)
+    console.log(admin)
     axios.get(markOpenUrl, {
       params: {
         id: id,
         user: admin
       }
     }).then(res => {
+      console.log(res.data)
       res.data.error 
-        ? setError(res.data.error)
+        ? handleError(res.data.error)
         : setTimeout(() => {
         getData()
         setButtonLoading(false)

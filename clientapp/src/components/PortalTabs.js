@@ -2,6 +2,7 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { useContext } from "react";
 import { ShopContext } from "../Context/ShopContext";
 import AwaitingEstimates from "./AwaitingEstimates";
+import OpenEstimates from "./OpenEstimates";
 
 export default function PortalTabs() {
 
@@ -20,7 +21,7 @@ export default function PortalTabs() {
           <AwaitingEstimates />
         </TabPanel>
         <TabPanel>
-          <p>two!</p>
+          <OpenEstimates />
         </TabPanel>
         <TabPanel>
           <p>three!</p>
